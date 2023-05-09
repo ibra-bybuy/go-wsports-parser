@@ -57,7 +57,9 @@ func (e *Event) ToEvent(allItems *[]model.Event, lang model.Lang) (model.Event, 
 			},
 		}
 
-		return returnItem, nil
+		if returnItem.Name != "" {
+			return returnItem, nil
+		}
 	}
 
 	return model.Event{}, errors.New("Error")

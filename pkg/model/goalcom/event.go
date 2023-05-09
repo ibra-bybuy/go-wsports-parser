@@ -1,7 +1,10 @@
 package goalcom
 
 import (
+	"time"
+
 	"github.com/ibra-bybuy/wsports-parser/pkg/model"
+	"github.com/ibra-bybuy/wsports-parser/pkg/utils/datetime"
 	"github.com/ibra-bybuy/wsports-parser/pkg/utils/stringformatter"
 )
 
@@ -64,7 +67,14 @@ func (list *LivescoreList) ToEvents(lang model.Lang) *[]model.Event {
 
 	for _, item := range *list {
 		for _, match := range item.Matches {
+			startAt, err := datetime.FromFull(match.StartDate)
+
+			if err != nil {
+				continue
+			}
+
 			events = append(events, model.Event{
+				ID:        match.TeamA.Full + " - " + match.TeamB.Full,
 				Name:      item.Competition.Area.Name + " - " + item.Competition.Name,
 				AvatarURL: item.Competition.Badge.URL,
 				Teams: []model.Team{
@@ -81,7 +91,9 @@ func (list *LivescoreList) ToEvents(lang model.Lang) *[]model.Event {
 						Lang:      lang,
 					},
 				},
-				StartAt: match.StartDate,
+				StartAt: datetime.Full(startAt),
+				EndAt:   datetime.Full(startAt.Add(time.Minute * 150)),
+				Address: match.Venue.Name,
 				Lang:    lang,
 			})
 		}

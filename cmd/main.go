@@ -5,6 +5,7 @@ import (
 
 	"github.com/ibra-bybuy/wsports-parser/internal/controller"
 	"github.com/ibra-bybuy/wsports-parser/internal/handler/parser"
+	"github.com/ibra-bybuy/wsports-parser/internal/repository/football"
 	"github.com/ibra-bybuy/wsports-parser/internal/repository/ufc"
 )
 
@@ -19,11 +20,11 @@ func main() {
 	log.Printf("FETCHED MMA EVENTS %+v\n", mmaEvents)
 
 	// FETCH FOOTBALL
-	// footballParser := parser.New()
-	// footballRep := football.New(footballParser.Collector)
-	// footballController := controller.New(footballRep)
-	// footballEvents := footballController.GetEvents()
-	// log.Printf("FETCHED FOOTBALL EVENTS %+v\n", footballEvents)
+	footballParser := parser.New()
+	footballRep := football.New(footballParser.Collector)
+	footballController := controller.New(footballRep)
+	footballEvents := footballController.GetEvents()
+	log.Printf("FETCHED FOOTBALL EVENTS %+v\n", footballEvents)
 
 	// ADD EVENTS TO DATABASE
 
