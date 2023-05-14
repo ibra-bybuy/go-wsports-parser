@@ -45,6 +45,7 @@ func (e *Event) ToEvent(allItems *[]model.Event, lang model.Lang) (model.Event, 
 				team1Name := strings.ToLower(item.Teams[0].Name)
 				team2Name := strings.ToLower(item.Teams[1].Name)
 				if strings.Contains(team1Name, strings.ToLower(name1)) || strings.Contains(team2Name, strings.ToLower(name2)) {
+					item.HideElements = ".navbar, .row.text-center.mt-2, .row .col-12 h2, .row .col-12.text-center, .row .col-lg-3, .row .col-lg-9 .mt-1"
 					returnItem = item
 				}
 			}

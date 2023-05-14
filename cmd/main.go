@@ -1,31 +1,55 @@
 package main
 
 import (
+	"context"
 	"log"
 
-	"github.com/ibra-bybuy/wsports-parser/internal/controller"
+	fetchController "github.com/ibra-bybuy/wsports-parser/internal/controller/fetch_controller"
+	saveController "github.com/ibra-bybuy/wsports-parser/internal/controller/save_controller"
 	"github.com/ibra-bybuy/wsports-parser/internal/handler/parser"
+	"github.com/ibra-bybuy/wsports-parser/internal/repository/dotenv"
+	"github.com/ibra-bybuy/wsports-parser/internal/repository/events"
 	"github.com/ibra-bybuy/wsports-parser/internal/repository/football"
+	"github.com/ibra-bybuy/wsports-parser/internal/repository/mongodb"
 	"github.com/ibra-bybuy/wsports-parser/internal/repository/ufc"
+	"github.com/ibra-bybuy/wsports-parser/pkg/model"
 )
 
 func main() {
 	log.Println("Starting service for fetching events")
 
+	// Load .env vars
+	dotenv.Load()
+
+	allEvents := []model.Event{}
+
+	// INITING DATABASE
+	mngClient := mongodb.New()
+	sRep := events.NewMongo(mngClient)
+	sCtrl := saveController.New(sRep)
+
+	defer func() {
+		if err := mngClient.Disconnect(mngClient.Ctx); err != nil {
+			panic(err)
+		}
+	}()
+
 	// FETCH MMA
 	ufcParser := parser.New()
 	ufcRep := ufc.New(ufcParser.Collector)
-	mmaController := controller.New(ufcRep)
+	mmaController := fetchController.New(ufcRep)
 	mmaEvents := mmaController.GetEvents()
+	allEvents = append(allEvents, *mmaEvents...)
 	log.Printf("FETCHED MMA EVENTS %+v\n", mmaEvents)
 
 	// FETCH FOOTBALL
 	footballParser := parser.New()
 	footballRep := football.New(footballParser.Collector)
-	footballController := controller.New(footballRep)
+	footballController := fetchController.New(footballRep)
 	footballEvents := footballController.GetEvents()
+	allEvents = append(allEvents, *footballEvents...)
 	log.Printf("FETCHED FOOTBALL EVENTS %+v\n", footballEvents)
 
 	// ADD EVENTS TO DATABASE
-
+	sCtrl.Add(context.Background(), &allEvents)
 }
