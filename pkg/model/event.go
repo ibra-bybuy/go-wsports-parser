@@ -11,4 +11,5 @@ type Event struct {
 	Lang         Lang     `json:"lang" bson:"lang"`
 	Streams      []Stream `json:"streams" bson:"streams"`
 	HideElements string   `json:"hideElements" bson:"hideElements"`
+	Sport        string   `json:"sport" bson:"sport"`
 }

@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/gocolly/colly"
+	"github.com/ibra-bybuy/wsports-parser/pkg/constants"
 	"github.com/ibra-bybuy/wsports-parser/pkg/model"
 	"github.com/ibra-bybuy/wsports-parser/pkg/utils/datetime"
 )
@@ -93,6 +94,7 @@ func (r *repository) parseEvents(events *[]model.Event, lang *model.Lang) {
 							AvatarURL: avatar,
 							Address:   address,
 							Lang:      *lang,
+							Sport:     constants.MMA_TYPE,
 						}
 
 						*events = append(*events, event)

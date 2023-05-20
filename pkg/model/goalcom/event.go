@@ -3,6 +3,7 @@ package goalcom
 import (
 	"time"
 
+	"github.com/ibra-bybuy/wsports-parser/pkg/constants"
 	"github.com/ibra-bybuy/wsports-parser/pkg/model"
 	"github.com/ibra-bybuy/wsports-parser/pkg/utils/datetime"
 	"github.com/ibra-bybuy/wsports-parser/pkg/utils/stringformatter"
@@ -95,6 +96,7 @@ func (list *LivescoreList) ToEvents(lang model.Lang) *[]model.Event {
 				EndAt:   datetime.Full(startAt.Add(time.Minute * 150)),
 				Address: match.Venue.Name,
 				Lang:    lang,
+				Sport:   constants.FOOTBALL_TYPE,
 			})
 		}
 	}
