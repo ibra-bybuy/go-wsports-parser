@@ -1,5 +1,11 @@
 package model
 
+import (
+	"time"
+
+	"github.com/ibra-bybuy/wsports-parser/pkg/utils/datetime"
+)
+
 type Event struct {
 	ID           string   `json:"id" bson:"id"`
 	Name         string   `json:"name" bson:"name"`
@@ -12,4 +18,8 @@ type Event struct {
 	Streams      []Stream `json:"streams" bson:"streams"`
 	HideElements string   `json:"hideElements" bson:"hideElements"`
 	Sport        string   `json:"sport" bson:"sport"`
+}
+
+func (e *Event) GetTime() (time.Time, error) {
+	return datetime.FromFull(e.StartAt)
 }

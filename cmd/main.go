@@ -10,8 +10,8 @@ import (
 	"github.com/ibra-bybuy/wsports-parser/internal/repository/dotenv"
 	"github.com/ibra-bybuy/wsports-parser/internal/repository/events"
 	"github.com/ibra-bybuy/wsports-parser/internal/repository/football"
+	"github.com/ibra-bybuy/wsports-parser/internal/repository/mma"
 	"github.com/ibra-bybuy/wsports-parser/internal/repository/mongodb"
-	"github.com/ibra-bybuy/wsports-parser/internal/repository/ufc"
 	"github.com/ibra-bybuy/wsports-parser/pkg/model"
 )
 
@@ -35,9 +35,9 @@ func main() {
 	}()
 
 	// FETCH MMA
-	ufcParser := parser.New()
-	ufcRep := ufc.New(ufcParser.Collector)
-	mmaController := fetchController.New(ufcRep)
+	mmaParser := parser.New()
+	mmaRep := mma.New(mmaParser.Collector)
+	mmaController := fetchController.New(mmaRep)
 	mmaEvents := mmaController.GetEvents()
 	allEvents = append(allEvents, *mmaEvents...)
 	log.Printf("FETCHED MMA EVENTS %+v\n", mmaEvents)
