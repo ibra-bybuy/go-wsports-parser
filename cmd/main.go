@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"log"
+	"time"
 
 	fetchController "github.com/ibra-bybuy/wsports-parser/internal/controller/fetch_controller"
 	saveController "github.com/ibra-bybuy/wsports-parser/internal/controller/save_controller"
@@ -21,8 +22,6 @@ func main() {
 	// Load .env vars
 	dotenv.Load()
 
-	allEvents := []model.Event{}
-
 	// INITING DATABASE
 	mngClient := mongodb.New()
 	sRep := events.NewMongo(mngClient)
@@ -34,22 +33,28 @@ func main() {
 		}
 	}()
 
-	// FETCH MMA
-	mmaParser := parser.New()
-	mmaRep := mma.New(mmaParser.Collector)
-	mmaController := fetchController.New(mmaRep)
-	mmaEvents := mmaController.GetEvents()
-	allEvents = append(allEvents, *mmaEvents...)
-	log.Printf("FETCHED MMA EVENTS %+v\n", mmaEvents)
+	// Fetching data every 6 hours
+	for {
+		allEvents := []model.Event{}
+		// FETCH MMA
+		mmaParser := parser.New()
+		mmaRep := mma.New(mmaParser.Collector)
+		mmaController := fetchController.New(mmaRep)
+		mmaEvents := mmaController.GetEvents()
+		allEvents = append(allEvents, *mmaEvents...)
+		log.Printf("FETCHED MMA EVENTS %+v\n", mmaEvents)
 
-	// FETCH FOOTBALL
-	footballParser := parser.New()
-	footballRep := football.New(footballParser.Collector)
-	footballController := fetchController.New(footballRep)
-	footballEvents := footballController.GetEvents()
-	allEvents = append(allEvents, *footballEvents...)
-	log.Printf("FETCHED FOOTBALL EVENTS %+v\n", footballEvents)
+		// FETCH FOOTBALL
+		footballParser := parser.New()
+		footballRep := football.New(footballParser.Collector)
+		footballController := fetchController.New(footballRep)
+		footballEvents := footballController.GetEvents()
+		allEvents = append(allEvents, *footballEvents...)
+		log.Printf("FETCHED FOOTBALL EVENTS %+v\n", footballEvents)
 
-	// ADD EVENTS TO DATABASE
-	sCtrl.Add(context.Background(), &allEvents)
+		// ADD EVENTS TO DATABASE
+		sCtrl.Add(context.Background(), &allEvents)
+		time.Sleep(time.Second * 20)
+	}
+
 }
