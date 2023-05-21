@@ -13,6 +13,16 @@ services:
       - '${MONGO_PORT}:${MONGO_PORT}'
     volumes:
       - dbdata6:/data/db
+  parser:
+    build:
+      context: .
+      dockerfile: "Dockerfile"
+    restart: always
+    container_name: parser
+    env_file:
+      - .env
+    depends_on:
+      - mongodb
 
 volumes:
   dbdata6:

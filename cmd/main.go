@@ -54,7 +54,7 @@ func main() {
 
 		// ADD EVENTS TO DATABASE
 		sCtrl.Add(context.Background(), &allEvents)
-		time.Sleep(time.Second * 20)
+		time.Sleep(time.Hour * 6)
 	}
 
 }
