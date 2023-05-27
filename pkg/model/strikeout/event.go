@@ -18,7 +18,7 @@ type Event struct {
 
 type Events []Event
 
-const HideElements = ".navbar, .row.text-center.mt-2, .row .col-12 h2, .row .col-12.text-center, .row .col-lg-3, .row .col-lg-9 .mt-1"
+const HideElements = ".navbar:0,.row:0,.row:1,.mt-1:0,.row:3,.row:4,.row:5,.col-lg-3:0,.btn-danger:0,.d-none:0"
 
 func (e *Event) ToEvent(allItems *[]model.Event, lang model.Lang) (model.Event, error) {
 	filterName := strings.ReplaceAll(e.Name, ".", "")
