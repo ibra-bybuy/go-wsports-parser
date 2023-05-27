@@ -24,6 +24,7 @@ func (e *Event) ToEvent(allItems *[]model.Event, lang model.Lang) (model.Event, 
 	filterName := strings.ReplaceAll(e.Name, ".", "")
 	filterName = strings.ReplaceAll(filterName, " W ", " ")
 	names := strings.Split(filterName, "vs")
+	eStartTime, _ := e.GetTime()
 
 	if len(names) >= 2 {
 		name1 := strings.TrimSpace(names[0])
@@ -48,7 +49,10 @@ func (e *Event) ToEvent(allItems *[]model.Event, lang model.Lang) (model.Event, 
 			if len(item.Teams) >= 2 {
 				team1Name := strings.ToLower(item.Teams[0].Name)
 				team2Name := strings.ToLower(item.Teams[1].Name)
-				if strings.Contains(team1Name, strings.ToLower(name1)) || strings.Contains(team2Name, strings.ToLower(name2)) {
+				itemTime, _ := item.GetTime()
+				sameHour := datetime.SameDayHour(eStartTime, itemTime)
+				if strings.Contains(team1Name, strings.ToLower(name1)) || strings.Contains(team2Name, strings.ToLower(name2)) && sameHour {
+
 					item.HideElements = HideElements
 					returnItem = item
 				}
@@ -110,5 +114,7 @@ func (evs *Events) GetByTerms(terms []string) *Event {
 }
 
 func (e *Event) GetTime() (time.Time, error) {
-	return datetime.FromYMDHS(e.StartAtDateTime)
+	t, err := datetime.FromYMDHS(e.StartAtDateTime)
+	newTime := t.Add(-time.Hour)
+	return newTime, err
 }
